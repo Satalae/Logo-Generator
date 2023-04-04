@@ -5,11 +5,7 @@ const shapes = require('./lib/shapes.js');
 
 //Global Variables
 const shapeOptions = ['Circle', 'Triangle', 'Square'];
-
-//The guy
-const generateSVG = ({logo, logoColor, shape, shapeColor}) =>
-    console.log(`${logo}, ${logoColor}, ${shape}, ${shapeColor}`);
-
+    
 inquirer
     .prompt([
         {
@@ -28,6 +24,10 @@ inquirer
             name: 'textColor',
             type: 'input',
             message: '\n What colour would you like the text to be? \n (Input either name or hexidecimal value)',
+            //validate: (answer) => {
+                //if(actually a color)
+                //else() do it again
+            //},
         },
         {
             name: 'shapeOption',
@@ -41,11 +41,29 @@ inquirer
             message: '\n Which colour would you like the shape to be? \n (Input either name or hexidecimal value)'
         }
     ])
-    .then((answers) => {
-        var logo = answers.logoTitle;
-        var logoColor = answers.textColor;
-        var shape = answers.shapeOption;
-        var shapeColor = answers.shapeColor;
+    .then(({logoTitle, textColor, shapeOption, shapeColor}) => {
+        let chosenShape;
 
-        generateSVG(logo, logoColor, shape, shapeColor);
+        //Checks and creates the given shape
+        switch(shapeOption){
+            case 'Circle':
+                chosenShape = new shapes.Circle(logoTitle, textColor, shapeColor);
+                console.log('Circle Selected \n');
+                break;
+            case 'Triangle':
+                chosenShape = new shapes.Triangle(logoTitle, textColor, shapeColor);
+                console.log('Triangle Selected \n');
+                break;
+            case 'Square':
+                chosenShape = new shapes.Square(logoTitle, textColor, shapeColor);
+                console.log('Square Selected \n');
+                break;
+        }
+
+        const genSVG = chosenShape.render();
+        
+        //Creates file with parameters given by the class object
+        fs.writeFile(`GeneratedLogo.svg`, genSVG, (err) => {
+            err ? console.error(err) : console.log('SVG Successfully generated! Check your local files where this was run.')
+        })
     })
