@@ -1,4 +1,5 @@
 examples
 node_modules
 website.html
-GeneratedLogo.svg
+logo.svg
+colors.js
